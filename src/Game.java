@@ -10,5 +10,11 @@ public class Game {
 
     void initGame() {
         gameStarted = true;
+        score = 0;
+    }
+
+    void finishGame(int score) {
+        gameStarted = false;
+        this.score = score;
     }
 }

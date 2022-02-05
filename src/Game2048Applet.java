@@ -25,7 +25,7 @@ public class Game2048Applet extends PApplet {
     public void keyPressed() {
         if (!game.getGameStarted()) {
             game.initGame();
-            field.initField();
+            field.initRandomCells(2);
             return;
         }
         if (keyCode == UP) {
@@ -36,6 +36,11 @@ public class Game2048Applet extends PApplet {
             field.moveDown();
         } else if (keyCode == LEFT) {
             field.moveLeft();
+        }
+        int score = field.getScore();
+        if (!field.initRandomCells(2) || score == 2048) {
+            game.finishGame(score);
+            field = new Field(fSize);
         }
     }
 
@@ -50,7 +55,11 @@ public class Game2048Applet extends PApplet {
             if (game.getScore() == 0) {
                 text("Press any key", (float)w / 2, (float)h / 2);
             } else {
-                text("Game Over\nYour score: " + game.getScore(), (float)w / 2, (float)h / 2);
+                text("Game Over\n"
+                        + "Your score: " + game.getScore() + "\n"
+                        + "Press any key to continue",
+                        (float)w / 2,
+                        (float)h / 2);
             }
         }
     }

@@ -1,5 +1,3 @@
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,20 +22,27 @@ public class Field {
         return new Coords((index / size), (index % size));
     }
 
-    private void initRandomCell() {
-        Random random = new Random();
-        int i = random.nextInt(cells.size());
-        Cell cell = cells.get(i);
-        if (cell.getValue() == 0) {
-            cell.setValue(2);
-        } else {
-            initRandomCell();
+    private boolean initRandomCell() {
+        List<Integer> emptyCells = getEmptyCells();
+        if (emptyCells.size() == 0) {
+            return false;
         }
+        Random random = new Random();
+        int i = random.nextInt(emptyCells.size());
+        Cell cell = cells.get(emptyCells.get(i));
+        cell.setValue(2);
+        return true;
     }
 
-    public void initField() {
-        initRandomCell();
-        initRandomCell();
+    public boolean initRandomCells(int count) {
+        do {
+            if (!initRandomCell()) {
+                return false;
+            }
+            count--;
+        } while (count != 0);
+
+        return true;
     }
 
     private void mergeCells(Cell cell1, Cell cell2) {
@@ -56,7 +61,6 @@ public class Field {
                 }
                 int dir = dirI != 0 ? dirI : dirJ;
                 while (dir == 1 ? k < size : k >= 0) {
-                    System.out.printf("%d, %d, %d, %d\n", i, j, dirI != 0 ? k : i, dirJ != 0 ? k : j);
                     Cell cell1 = cells.get(getIndexByIJ(dirI != 0 ? k : i, dirJ != 0 ? k : j));
                     Cell cell2 = cells.get(getIndexByIJ(i, j));
                     mergeCells(cell1, cell2);
@@ -82,10 +86,30 @@ public class Field {
         move(0, -1);
     }
 
-    void display(Game2048Applet context) {
+    public List<Integer> getEmptyCells() {
+        List<Integer> emptyCells = new ArrayList<>();
         for (int i = 0; i < cells.size(); i++) {
-            Cell cell = cells.get(i);
-            Coords ij = getIJByIndex(i);
+            if (cells.get(i).getValue() == 0) {
+                emptyCells.add(i);
+            }
+        }
+        return emptyCells;
+    }
+
+    public int getScore() {
+        int score = 0;
+        for (Cell cell : cells) {
+            if (score < cell.getValue()) {
+                score = cell.getValue();
+            }
+        }
+        return score;
+    }
+
+    void display(Game2048Applet context) {
+        int i = 0;
+        for (Cell cell : cells) {
+            Coords ij = getIJByIndex(i++);
             cell.display(context, ij.getI(), ij.getJ());
         }
     }
