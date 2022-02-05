@@ -31,10 +31,14 @@ public class Field {
         int i = random.nextInt(emptyCells.size());
         Cell cell = cells.get(emptyCells.get(i));
         cell.setValue(2);
+        cell.setIsNew(true);
         return true;
     }
 
     public boolean initRandomCells(int count) {
+        for (Cell cell : cells) {
+            cell.setIsNew(false);
+        }
         do {
             if (!initRandomCell()) {
                 return false;
@@ -45,11 +49,19 @@ public class Field {
         return true;
     }
 
-    private void mergeCells(Cell cell1, Cell cell2) {
+    private void swapCells(Cell cell1, Cell cell2) {
+        int tmp = cell1.getValue();
+        cell1.setValue(cell2.getValue());
+        cell2.setValue(tmp);
+    }
+
+    private boolean mergeCells(Cell cell1, Cell cell2) {
         if (cell2.getValue() == cell1.getValue()) {
             cell1.setValue(cell1.getValue() * 2);
             cell2.setValue(0);
+            return true;
         }
+        return false;
     }
 
     public void move(int dirI, int dirJ) {
@@ -60,11 +72,21 @@ public class Field {
                     continue;
                 }
                 int dir = dirI != 0 ? dirI : dirJ;
+                Cell lastEmptyCell = null;
+                Cell cell2 = cells.get(getIndexByIJ(i, j));
+                boolean merged = false;
                 while (dir == 1 ? k < size : k >= 0) {
                     Cell cell1 = cells.get(getIndexByIJ(dirI != 0 ? k : i, dirJ != 0 ? k : j));
-                    Cell cell2 = cells.get(getIndexByIJ(i, j));
-                    mergeCells(cell1, cell2);
+                    if (cell1.getValue() == 0) {
+                        lastEmptyCell = cell1;
+                    }
+                    if (!merged) {
+                        merged = mergeCells(cell1, cell2);
+                    }
                     k += dir;
+                }
+                if (lastEmptyCell != null) {
+                    swapCells(lastEmptyCell, cell2);
                 }
             }
         }

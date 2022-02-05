@@ -36,6 +36,8 @@ public class Game2048Applet extends PApplet {
             field.moveDown();
         } else if (keyCode == LEFT) {
             field.moveLeft();
+        } else {
+            return;
         }
         int score = field.getScore();
         if (!field.initRandomCells(2) || score == 2048) {
