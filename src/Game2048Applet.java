@@ -3,9 +3,14 @@ import processing.core.*;
 public class Game2048Applet extends PApplet {
     private final int w = 600;
     private final int h = 600;
+    private final int fSize = 4;
+    public float getCellSize() {
+        return w / (float) fSize;
+    }
     private Game game;
+    private Field field;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         PApplet.main("Game2048Applet");
     }
 
@@ -13,12 +18,14 @@ public class Game2048Applet extends PApplet {
     public void setup() {
         surface.setSize(w, h);
         game = new Game();
+        field = new Field(fSize);
     }
 
     @Override
     public void keyPressed() {
         if (!game.getGameStarted()) {
             game.initGame();
+            field.initField();
         }
     }
 
@@ -26,7 +33,7 @@ public class Game2048Applet extends PApplet {
     public void draw() {
         background(255);
         if (game.getGameStarted()) {
-
+            field.display(this);
         } else {
             fill(0);
             textAlign(CENTER);
