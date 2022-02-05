@@ -26,6 +26,16 @@ public class Game2048Applet extends PApplet {
         if (!game.getGameStarted()) {
             game.initGame();
             field.initField();
+            return;
+        }
+        if (keyCode == UP) {
+            field.moveUp();
+        } else if (keyCode == RIGHT) {
+            field.moveRight();
+        } else if (keyCode == DOWN) {
+            field.moveDown();
+        } else if (keyCode == LEFT) {
+            field.moveLeft();
         }
     }
 
